@@ -5,10 +5,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -17,15 +15,21 @@ import java.util.List;
 import java.util.Scanner;
 
 public class DisplayLabelsPanel extends JPanel {
+    DisplayLabelsPanel(Categoriser categoriser) {
+        this.categoriser = categoriser;
+    }
+
+    private final Categoriser categoriser;
     private Path image;
     private /* Nullable */ BufferedImage baseImage;
     private BoxList metadata;
 
-    public void loadImage(String image) throws IOException {
-        this.image = Path.of("images", image);
-        String s[] = image.split("\\.");
+    public void loadImage(Path image) throws IOException {
+        this.image = image;
+        String filename = image.getFileName().toString();
+        String s[] = filename.split("\\.");
         String extension = s[s.length - 1];
-        Path meta = Path.of("images", "labels", image.substring(0, image.length() - extension.length() - 1) + ".txt");
+        Path meta = Path.of("images", "labels", filename.substring(0, filename.length() - extension.length() - 1) + ".txt");
 
         this.baseImage = ImageIO.read(this.image.toFile());
         this.metadata = new BoxList(meta);

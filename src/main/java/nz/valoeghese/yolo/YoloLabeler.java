@@ -6,9 +6,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.Properties;
 
-public class YoloLabeler extends JPanel {
+public class YoloLabeler extends JPanel implements Categoriser {
     static final Properties labels = new Properties();
     static Path labelsFile;
 
@@ -53,8 +54,32 @@ public class YoloLabeler extends JPanel {
         this.add(splitPane, BorderLayout.CENTER);
 
         splitPane.setDividerLocation(880);
+
+        Optional<Path> first = Files.list(Path.of("images"))
+                .filter(p -> isImage(p))
+                .findFirst();
+        if (first.isPresent())
+            this.display.loadImage(first.get());
     }
 
     private final JList<String> list = new JList<>();
-    private final DisplayLabelsPanel display = new DisplayLabelsPanel();
+    private final DisplayLabelsPanel display = new DisplayLabelsPanel(this);
+
+    @Override
+    public int getCurrentCategory() {
+        return this.list.getSelectedIndex();
+    }
+
+    @Override
+    public String getCategoryLabel(int idx) throws IndexOutOfBoundsException {
+        return list.getModel().getElementAt(idx);
+    }
+
+    private static boolean isImage(Path p) {
+        String filename = p.getFileName().toString();
+        String[] parts = filename.split("\\.");
+        String ext = parts[parts.length - 1];
+        return "jpeg".equals(ext) || "jpg".equals(ext) || ".gif".equals(ext) ||
+                "bmp".equals(ext) || "png".equals(ext); // add more file types here
+    }
 }
