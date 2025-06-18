@@ -1,1 +1,6 @@
-.*
+# Ignore everything
+*
+#except gitignore
+!.gitignore
+# even in subdirectories
+*/
