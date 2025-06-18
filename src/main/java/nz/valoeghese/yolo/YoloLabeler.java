@@ -18,8 +18,12 @@ public class YoloLabeler extends JPanel {
         Files.createDirectories(Path.of("images", "discarded"));
 
         labelsFile = Path.of("images", "object_labels.txt");
-        try (BufferedReader reader = new BufferedReader(Files.newBufferedReader(labelsFile))) {
-            labels.load(reader);
+        if (Files.exists(labelsFile)) {
+            try (BufferedReader reader = new BufferedReader(Files.newBufferedReader(labelsFile))) {
+                labels.load(reader);
+            }
+        } else {
+            Files.createFile(labelsFile);
         }
 
         // GUI
