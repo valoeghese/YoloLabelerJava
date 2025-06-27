@@ -3,6 +3,7 @@ package nz.valoeghese.yolo;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.stream.Stream;
 
@@ -33,7 +34,7 @@ public class Batch {
     private LabellingContext categoriser = new LabellingContext();
 
     public Stream<Path> listImages() throws IOException {
-        return Files.list(Path.of("images"))
+        return Files.list(Paths.get("images"))
                 .filter(Batch::isImage);
     }
 
@@ -53,7 +54,7 @@ public class Batch {
         String filename = path.getFileName().toString();
         String s[] = filename.split("\\.");
         String extension = s[s.length - 1];
-        Path meta = Path.of("images", "labels", filename.substring(0, filename.length() - extension.length() - 1) + ".txt");
+        Path meta = Paths.get("images", "labels", filename.substring(0, filename.length() - extension.length() - 1) + ".txt");
         return new YoloImage(path, meta, this.categoriser);
     }
 
