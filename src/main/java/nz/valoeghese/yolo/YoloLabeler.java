@@ -56,7 +56,7 @@ public class YoloLabeler extends JPanel implements Categoriser {
         splitPane.setDividerLocation(880);
 
         Optional<Path> first = Files.list(Path.of("images"))
-                .filter(p -> isImage(p))
+                .filter(YoloLabeler::isImage)
                 .findFirst();
         if (first.isPresent())
             this.display.loadImage(first.get());
@@ -66,8 +66,19 @@ public class YoloLabeler extends JPanel implements Categoriser {
     private final DisplayLabelsPanel display = new DisplayLabelsPanel(this);
 
     @Override
-    public int getCurrentCategory() {
-        return this.list.getSelectedIndex();
+    public String getCurrentCategory() {
+        return this.list.getSelectedValue();//this.list.getSelectedIndex();
+    }
+
+    @Override
+    public int getCategoryIdx(String label) throws IllegalArgumentException {
+        for (int i = 0; i < label.length(); i++) {
+            if (label.equals(list.getModel().getElementAt(i))) {
+                return i;
+            }
+        }
+
+        throw new IllegalArgumentException("No index");
     }
 
     @Override
