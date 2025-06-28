@@ -102,6 +102,11 @@ public class YoloImage implements Iterable<Box> {
         }
     }
 
+    // Does not save!
+    public void removeBox(Box box) {
+        this.boxes.remove(box);
+    }
+
     public void reSave() throws IOException {
         if (this.image != null)
             throw new IllegalStateException("Image is loaded.");

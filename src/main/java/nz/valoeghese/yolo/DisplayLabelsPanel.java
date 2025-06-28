@@ -27,6 +27,10 @@ public class DisplayLabelsPanel extends JPanel {
         return this.metadata;
     }
 
+    public void markDirty() {
+        this.dirty = true;
+    }
+
     public void loadImage(YoloImage image) throws IOException {
         if (this.dirty) {
             this.metadata.fullSave();

@@ -19,7 +19,21 @@ public class AdjustMode extends Mode {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        movingBox = null;
+        if (movingBox != null) {
+            Point start = this.start();
+            Point end   = this.end();
+
+            if (end.x - start.x < 1 || end.y - start.y < 1) {
+                this.panel.getYoloImage().removeBox(movingBox);
+            } else {
+                movingBox.x = start.x;
+                movingBox.y = start.y;
+                movingBox.x1 = end.x;
+                movingBox.y1 = end.y;
+            }
+
+            movingBox = null;
+        }
         this.panel.repaint();
     }
 
@@ -78,7 +92,6 @@ public class AdjustMode extends Mode {
         movingBox = null;
         if (oClosest != null) {
             movingBox = oClosest;
-            System.out.println("oh hyeah ");
             movingEdge = edge;
             delta = 0;
             this.panel.repaint();
@@ -113,9 +126,9 @@ public class AdjustMode extends Mode {
             return null;
         switch (movingEdge) {
             case TOP:
-                return new Point((int) movingBox.x, (int) (movingBox.y + delta));
+                return new Point((int) movingBox.x, (int) Math.min(movingBox.y + delta, movingBox.y1));
             case LEFT:
-                return new Point((int) (movingBox.x + delta), (int) movingBox.y);
+                return new Point((int) Math.min(movingBox.x + delta, movingBox.x1), (int) movingBox.y);
             default:
                 return new Point((int) movingBox.x, (int) movingBox.y);
         }
@@ -127,9 +140,9 @@ public class AdjustMode extends Mode {
             return null;
         switch (movingEdge) {
             case BOTTOM:
-                return new Point((int) movingBox.x1, (int) (movingBox.y1 + delta));
+                return new Point((int) movingBox.x1, (int) Math.max(movingBox.y, movingBox.y1 + delta));
             case RIGHT:
-                return new Point((int) (movingBox.x1 + delta), (int) movingBox.y1);
+                return new Point((int) Math.max(movingBox.x, movingBox.x1 + delta), (int) movingBox.y1);
             default:
                 return new Point((int) movingBox.x1, (int) movingBox.y1);
         }
