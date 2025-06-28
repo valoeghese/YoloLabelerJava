@@ -14,14 +14,14 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class YoloLabeler extends JPanel {
+public class YoloLabelerRoot extends JPanel {
     public static void main(String[] args) throws IOException {
         // GUI
         JFrame frame = new JFrame();
         frame.setSize(new Dimension(1080, 720));
 
         Batch batch = new Batch(Paths.get("images"));
-        frame.add(new YoloLabeler(batch));
+        frame.add(new YoloLabelerRoot(batch));
 
         frame.setTitle("YOLO Labeler");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -35,7 +35,7 @@ public class YoloLabeler extends JPanel {
     private JButton previous, next;
     private Path currentPath;
 
-    YoloLabeler(Batch batch) throws IOException {
+    YoloLabelerRoot(Batch batch) throws IOException {
         this.batch = batch;
         this.setLayout(new BorderLayout());
 
@@ -78,7 +78,11 @@ public class YoloLabeler extends JPanel {
         this.add(bar, BorderLayout.NORTH);
 
         JSplitPane splitPane = new JSplitPane();
-        splitPane.setLeftComponent(this.display);
+        JScrollPane jScP = new JScrollPane(new JPanel());
+        jScP.getViewport().add(this.display);
+        jScP.getVerticalScrollBar().setUnitIncrement(12);
+        jScP.getHorizontalScrollBar().setUnitIncrement(12);
+        splitPane.setLeftComponent(jScP);
 
         JPanel panel = new JPanel();
         JButton button = new JButton("+");
@@ -127,7 +131,7 @@ public class YoloLabeler extends JPanel {
 
             if (p.equals(this.currentPath)) {
                 this.previous.setEnabled(last != null);
-                this.next.setEnabled(it.hasNext());
+                this.next.setEnabled(true);
                 return Optional.ofNullable(last);
             }
             last = p;

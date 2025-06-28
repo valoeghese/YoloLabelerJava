@@ -77,11 +77,14 @@ public class DisplayLabelsPanel extends JPanel {
     private YoloImage metadata;
     private /* Nullable */ BufferedImage baseImage;
 
-    private SelectionBox currentSelecting;
+    private final SelectionBox currentSelecting;
 
     public void loadImage(YoloImage image) throws IOException {
         this.metadata = image;
         this.baseImage = image.getImage();
+        this.setMinimumSize(new Dimension(baseImage.getWidth(), baseImage.getHeight()));
+        this.setPreferredSize(new Dimension(baseImage.getWidth(), baseImage.getHeight()));
+        this.getParent().repaint();
 
         this.repaint();
     }

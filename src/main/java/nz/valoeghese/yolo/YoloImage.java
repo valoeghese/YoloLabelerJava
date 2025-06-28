@@ -93,6 +93,10 @@ public class YoloImage implements Iterable<Box> {
         final int height = this.image.getHeight();
 
         // save (todo: more efficient saving? and add shutdown hook)
+        if (!Files.exists(this.p_boxes)) {
+            Files.createFile(this.p_boxes);
+        }
+
         try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(this.p_boxes, StandardOpenOption.APPEND))) {
             writer.printf("%d %f %f %f %f\n", this.categoriser.getCategoryIdx(box.object), box.x/width, box.y/height, box.x1/width, box.y1/height);
             writer.flush();
