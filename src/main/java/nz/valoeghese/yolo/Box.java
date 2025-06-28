@@ -14,4 +14,11 @@ public class Box {
 
     public String object;
     public double x, y, x1, y1;
+
+    public double width() {
+        return x1 - x;
+    }
+    public double height() {
+        return y1 - y;
+    }
 }
