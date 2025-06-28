@@ -2,6 +2,7 @@ package nz.valoeghese.yolo;
 
 import nz.valoeghese.yolo.mode.AdjustMode;
 import nz.valoeghese.yolo.mode.CreateMode;
+import nz.valoeghese.yolo.mode.MoveMode;
 
 import javax.swing.*;
 import java.awt.*;
@@ -56,11 +57,14 @@ public class YoloLabelerRoot extends JPanel {
 
         JButton createMode = new JButton("Create");
         JButton adjustMode = new JButton("Adjust");
-        new SelectionGroup(createMode, adjustMode).bind(this.display::setMode,
+        JButton moveMode = new JButton("Move");
+        new SelectionGroup(createMode, adjustMode, moveMode).bind(this.display::setMode,
                 new CreateMode(this.display, batch),
-                new AdjustMode(this.display, batch));
+                new AdjustMode(this.display, batch),
+                new MoveMode  (this.display, batch));
         bar.add(createMode);
         bar.add(adjustMode);
+        bar.add(moveMode);
         bar.addSeparator();
 
         this.previous = new JButton("Previous");
