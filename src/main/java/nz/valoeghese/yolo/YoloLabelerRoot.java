@@ -43,6 +43,13 @@ public class YoloLabelerRoot extends JPanel {
         this.setLayout(new BorderLayout());
 
         this.display = new DisplayLabelsPanel(batch);
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                this.display.getYoloImage().fullSave();
+            } catch (IOException e) {
+                e.printStackTrace(System.err);
+            }
+        }));
 
         JToolBar bar = new JToolBar();
         bar.setFloatable(false);

@@ -18,6 +18,7 @@ public class DisplayLabelsPanel extends JPanel {
 
     private final Batch batch;
     private Mode selectionMode;
+    private boolean dirty = false;
 
     private YoloImage metadata;
     private /* Nullable */ BufferedImage baseImage;
@@ -27,6 +28,11 @@ public class DisplayLabelsPanel extends JPanel {
     }
 
     public void loadImage(YoloImage image) throws IOException {
+        if (this.dirty) {
+            this.metadata.fullSave();
+        }
+
+        this.dirty = false;
         this.metadata = image;
         this.baseImage = image.getImage();
         this.setMinimumSize(new Dimension(baseImage.getWidth(), baseImage.getHeight()));
@@ -60,6 +66,14 @@ public class DisplayLabelsPanel extends JPanel {
         }
 
         // draw boxes
+        if (this.metadata != null) {
+            g.setColor(Color.YELLOW);
+            for (Box box : this.metadata) {
+                g.drawRect((int) box.x, (int) box.y, (int) Math.abs(box.x1 - box.x), (int) Math.abs(box.y1 - box.y));
+            }
+        }
+
+        // selection box
         Point p = this.selectionMode.start();
         Point p1 = this.selectionMode.end();
 
@@ -69,13 +83,6 @@ public class DisplayLabelsPanel extends JPanel {
 
             g.setColor(Color.GREEN);
             g.drawRect(x0, y0, Math.abs(p.x-p1.x), Math.abs(p.y-p1.y));
-        }
-
-        if (this.metadata != null) {
-            g.setColor(Color.YELLOW);
-            for (Box box : this.metadata) {
-                g.drawRect((int) box.x, (int) box.y, (int) Math.abs(box.x1 - box.x), (int) Math.abs(box.y1 - box.y));
-            }
         }
     }
 

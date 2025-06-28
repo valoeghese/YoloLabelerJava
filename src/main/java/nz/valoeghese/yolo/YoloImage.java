@@ -92,7 +92,6 @@ public class YoloImage implements Iterable<Box> {
         final int width = this.image.getWidth();
         final int height = this.image.getHeight();
 
-        // save (todo: more efficient saving? and add shutdown hook)
         if (!Files.exists(this.p_boxes)) {
             Files.createFile(this.p_boxes);
         }
