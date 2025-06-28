@@ -20,6 +20,7 @@ public class AdjustMode extends Mode {
     @Override
     public void mouseReleased(MouseEvent e) {
         movingBox = null;
+        this.panel.repaint();
     }
 
     @Override
@@ -28,6 +29,7 @@ public class AdjustMode extends Mode {
             delta = e.getY() - click;
         else
             delta = e.getX() - click;
+        this.panel.repaint();
     }
 
     @Override
@@ -79,6 +81,7 @@ public class AdjustMode extends Mode {
             System.out.println("oh hyeah ");
             movingEdge = edge;
             delta = 0;
+            this.panel.repaint();
         }
     }
 
@@ -97,7 +100,7 @@ public class AdjustMode extends Mode {
     }
 
     private <T> T closest(double v, double a, double b, T oA, T oB) {
-        if (a + b - 2 * v < 0) {
+        if (a + b - 2 * v > 0) {
             return oA;
         } else {
             return oB;
