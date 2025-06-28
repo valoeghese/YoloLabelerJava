@@ -1,6 +1,7 @@
 package nz.valoeghese.yolo;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicReference;
@@ -30,5 +31,7 @@ public final class SelectionGroup {
                 onChange.accept(value);
             });
         }
+
+        buttons[0].getActionListeners()[0].actionPerformed(new ActionEvent("",0,""));
     }
 }

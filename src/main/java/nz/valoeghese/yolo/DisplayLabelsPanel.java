@@ -1,83 +1,30 @@
 package nz.valoeghese.yolo;
 
+import nz.valoeghese.yolo.mode.Mode;
+import nz.valoeghese.yolo.mode.NoMode;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.file.Path;
 
 public class DisplayLabelsPanel extends JPanel {
     DisplayLabelsPanel(Batch batch) {
         this.batch = batch;
-
-        class K extends MouseAdapter implements SelectionBox {
-            private Point startPoint, endPoint;
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                startPoint = e.getPoint();
-                System.out.println(startPoint);
-            }
-
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                endPoint = e.getPoint();
-                DisplayLabelsPanel.this.repaint();
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                if (endPoint == null) {
-                    startPoint = null;
-                    return;
-                }
-                int width = Math.abs(startPoint.x - endPoint.x);
-                int height = Math.abs(startPoint.y - endPoint.y);
-
-                if (width > 2 && height > 2 && DisplayLabelsPanel.this.batch.getCategoriser().getCurrentCategory() != null) {
-                    try {
-                        DisplayLabelsPanel.this.metadata.addBox(new Box(
-                                DisplayLabelsPanel.this.batch.getCategoriser().getCurrentCategory(),
-                                Math.min(startPoint.x, endPoint.x),
-                                Math.min(startPoint.y, endPoint.y),
-                                Math.max(startPoint.x, endPoint.x),
-                                Math.max(startPoint.y, endPoint.y)
-                        ));
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                }
-
-                startPoint = null;
-                endPoint = null;
-                DisplayLabelsPanel.this.repaint();
-            }
-
-            @Override
-            public Point start() {
-                return this.startPoint;
-            }
-
-            @Override
-            public Point end() {
-                return this.endPoint;
-            }
-        }
-        K adapter = new K();
-
-        this.addMouseListener(adapter);
-        this.addMouseMotionListener(adapter);
-        this.currentSelecting = adapter;
+        this.setMode(new NoMode());
     }
 
     private final Batch batch;
+    private Mode selectionMode;
 
     private YoloImage metadata;
     private /* Nullable */ BufferedImage baseImage;
 
-    private final SelectionBox currentSelecting;
+    public YoloImage getYoloImage() {
+        return this.metadata;
+    }
 
     public void loadImage(YoloImage image) throws IOException {
         this.metadata = image;
@@ -87,6 +34,18 @@ public class DisplayLabelsPanel extends JPanel {
         this.getParent().repaint();
 
         this.repaint();
+    }
+
+    public void setMode(Mode mode) {
+        MouseListener[] existing = this.getMouseListeners();
+        if (existing.length > 0) {
+            this.removeMouseListener(existing[0]);
+            this.removeMouseMotionListener((MouseMotionListener) existing[0]);
+        }
+
+        this.selectionMode = mode;
+        this.addMouseListener(mode);
+        this.addMouseMotionListener(mode);
     }
 
     @Override
@@ -101,8 +60,8 @@ public class DisplayLabelsPanel extends JPanel {
         }
 
         // draw boxes
-        Point p = this.currentSelecting.start();
-        Point p1 = this.currentSelecting.end();
+        Point p = this.selectionMode.start();
+        Point p1 = this.selectionMode.end();
 
         if (p1 != null) {
             int x0 = Math.min(p.x, p1.x);
@@ -120,7 +79,7 @@ public class DisplayLabelsPanel extends JPanel {
         }
     }
 
-    interface SelectionBox {
+    public interface SelectionBox {
         Point start();
         Point end();
     }
