@@ -98,6 +98,36 @@ public class YoloLabelerRoot extends JPanel {
 
         JButton discardImage = new JButton("Discard this Image");
         bar.add(discardImage);
+        discardImage.addActionListener(e -> {
+            Path toDiscard = this.currentPath;
+
+            try {
+                if (this.next.isEnabled()) {
+                    Optional<Path> next = this.nextPage(this.batch::listImages);
+                    this.load(next.get());
+                } else if (this.previous.isEnabled()) {
+                    Optional<Path> previous = this.previousPage(this.batch::listImages);
+                    this.load(previous.get());
+                } else {
+                    JOptionPane.showMessageDialog(
+                            frame,
+                            "No other images in folder",
+                            "Cannot discard image!",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                    return; // early return
+                }
+
+                this.batch.discardImage(toDiscard);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(
+                        frame,
+                        ex.getClass().getSimpleName() + ": " + ex.getMessage(),
+                        "Cannot discard image!",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+        });
 
         this.add(bar, BorderLayout.NORTH);
 

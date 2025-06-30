@@ -17,9 +17,10 @@ public class Batch {
     Batch(Path root) throws IOException {
         this.root = root;
         this.labelsFile = this.root.resolve("object_labels.xml");
+        this.discardDirectory = this.root.resolve("discarded");
         // Directory Setup
         Files.createDirectories(this.root.resolve( "labels"));
-        Files.createDirectories(this.root.resolve("discarded"));
+        Files.createDirectories(this.discardDirectory);
         // Load labels
         if (Files.exists(labelsFile)) {
             try (InputStream reader = new BufferedInputStream(Files.newInputStream(labelsFile))) {
@@ -35,7 +36,7 @@ public class Batch {
         }
     }
 
-    private final Path root, labelsFile;
+    private final Path root, labelsFile, discardDirectory;
     private final Path lastSessionLastEdited;
     private Properties labels = new Properties();
     private int labelCount = 0;
@@ -64,10 +65,14 @@ public class Batch {
 
     public YoloImage loadImage(Path path) throws IOException {
         String filename = path.getFileName().toString();
-        String s[] = filename.split("\\.");
+        String[] s = filename.split("\\.");
         String extension = s[s.length - 1];
         Path meta = Paths.get("images", "labels", filename.substring(0, filename.length() - extension.length() - 1) + ".txt");
         return new YoloImage(path, meta, this.categoriser);
+    }
+
+    public void discardImage(Path path) throws IOException {
+        Files.move(path, this.discardDirectory.resolve(this.root.relativize(path)));
     }
 
     public void setLastEdited(Path path) throws IOException {
