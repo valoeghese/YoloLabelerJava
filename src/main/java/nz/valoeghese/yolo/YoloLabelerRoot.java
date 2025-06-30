@@ -100,6 +100,13 @@ public class YoloLabelerRoot extends JPanel {
         bar.add(discardImage);
         discardImage.addActionListener(e -> {
             Path toDiscard = this.currentPath;
+            int result = JOptionPane.showConfirmDialog(
+                    frame,
+                    "Are you sure you want to discard this image?",
+                    "Confirm Discard",
+                    JOptionPane.YES_NO_OPTION
+            );
+            if (result != JOptionPane.YES_OPTION) return;
 
             try {
                 if (this.next.isEnabled()) {
