@@ -7,6 +7,7 @@ import nz.valoeghese.yolo.Edge;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.Optional;
 
 public class AdjustMode extends Mode {
@@ -81,11 +82,12 @@ public class AdjustMode extends Mode {
     public Point start() {
         if (movingBox == null)
             return null;
+
         switch (movingEdge) {
             case TOP:
-                return new Point((int) movingBox.x, (int) Math.min(movingBox.y + delta, movingBox.y1));
+                return new Point((int) movingBox.x, (int) clamp(movingBox.y + delta, 0, movingBox.y1));
             case LEFT:
-                return new Point((int) Math.min(movingBox.x + delta, movingBox.x1), (int) movingBox.y);
+                return new Point((int) clamp(movingBox.x + delta, 0, movingBox.x1), (int) movingBox.y);
             default:
                 return new Point((int) movingBox.x, (int) movingBox.y);
         }
@@ -95,13 +97,21 @@ public class AdjustMode extends Mode {
     public Point end() {
         if (movingBox == null)
             return null;
+
+        final BufferedImage i = this.panel.getYoloImage().getImage();
         switch (movingEdge) {
             case BOTTOM:
-                return new Point((int) movingBox.x1, (int) Math.max(movingBox.y, movingBox.y1 + delta));
+                return new Point((int) movingBox.x1, (int) clamp(movingBox.y1 + delta, movingBox.y, i.getHeight() - 1));
             case RIGHT:
-                return new Point((int) Math.max(movingBox.x, movingBox.x1 + delta), (int) movingBox.y1);
+                return new Point((int) clamp(movingBox.x1 + delta, movingBox.x, i.getWidth() - 1), (int) movingBox.y1);
             default:
                 return new Point((int) movingBox.x1, (int) movingBox.y1);
         }
+    }
+
+    private static double clamp(double v, double min, double max) {
+        if (v < min) return min;
+        if (v > max) return max;
+        return v;
     }
 }

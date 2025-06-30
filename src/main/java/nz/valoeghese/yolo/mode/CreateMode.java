@@ -23,7 +23,25 @@ public class CreateMode extends Mode {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        endPoint = e.getPoint();
+        // clamp
+        int x = e.getPoint().x;
+        int y = e.getPoint().y;
+        int w = this.panel.getYoloImage().getImage().getWidth();
+        int h = this.panel.getYoloImage().getImage().getHeight();
+        if (x < 0) {
+            x = 0;
+        }
+        if (x >= w) {
+            x = w - 1;
+        }
+        if (y < 0) {
+            y = 0;
+        }
+        if (y >= h) {
+            y = h - 1;
+        }
+
+        endPoint = new Point(x, y);
         this.panel.repaint();
     }
 
