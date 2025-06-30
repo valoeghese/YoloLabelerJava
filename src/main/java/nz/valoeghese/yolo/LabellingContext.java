@@ -52,7 +52,7 @@ public class LabellingContext implements Categoriser {
 
     @Override
     public int getCategoryIdx(String label) {
-        for (int i = 0; i < label.length(); i++) {
+        for (int i = 0; i < model.getSize(); i++) {
             if (label.equals(model.getElementAt(i))) {
                 return i;
             }
