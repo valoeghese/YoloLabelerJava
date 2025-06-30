@@ -8,6 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
@@ -25,7 +27,7 @@ public class YoloLabelerRoot extends JPanel {
         frame.setSize(new Dimension(1080, 720));
 
         Batch batch = new Batch(Paths.get("images"));
-        frame.add(new YoloLabelerRoot(batch));
+        frame.add(new YoloLabelerRoot(frame, batch));
 
         frame.setTitle("YOLO Labeler");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -39,7 +41,7 @@ public class YoloLabelerRoot extends JPanel {
     private JButton previous, next;
     private Path currentPath;
 
-    YoloLabelerRoot(Batch batch) throws IOException {
+    YoloLabelerRoot(JFrame frame, Batch batch) throws IOException {
         this.batch = batch;
         this.setLayout(new BorderLayout());
 
@@ -103,7 +105,27 @@ public class YoloLabelerRoot extends JPanel {
         JPanel panel = new JPanel();
         JButton button = new JButton("+");
         panel.setLayout(new BorderLayout());
-        panel.add(batch.getCategoriser().createInterface(), BorderLayout.CENTER);
+        JList<String> labels = batch.getCategoriser().createInterface();
+
+        JPopupMenu labelInterface = createLabelMenu(frame, batch, labels);
+
+//        labels.setComponentPopupMenu(labelInterface);
+        labels.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    // https://gist.github.com/mikekucera/7363d3a3abaa64c61d06
+                    Point pt = e.getPoint();
+                    int rClicked = labels.locationToIndex(pt);
+                    System.out.println(rClicked);
+                    if (rClicked != -1 && labels.getCellBounds(rClicked,rClicked).contains(pt)) {
+                        labels.setSelectedIndex(rClicked);
+                        labelInterface.show(e.getComponent(), e.getX(), e.getY());
+                    }
+                }
+            }
+        });
+        panel.add(labels, BorderLayout.CENTER);
         panel.add(button, BorderLayout.SOUTH);
         button.addActionListener(new ActionListener() {
             @Override
@@ -133,6 +155,36 @@ public class YoloLabelerRoot extends JPanel {
                 this.next.setEnabled(true);
             }
         }
+    }
+
+    private static JPopupMenu createLabelMenu(JFrame frame, Batch batch, JList<String> labels) {
+        JPopupMenu labelInterface = new JPopupMenu();
+        JMenuItem renameMenu = new JMenuItem("Rename Label");
+        JMenuItem closeMenu = new JMenuItem("Close");
+        labelInterface.add(renameMenu);
+        labelInterface.add(closeMenu);
+        renameMenu.addActionListener(e -> {
+            String renaming = labels.getSelectedValue();
+            String s = JOptionPane.showInputDialog(
+                    frame,
+                    "Choose a new name for '" + renaming + "'",
+                    "Rename Label",
+                    JOptionPane.PLAIN_MESSAGE);
+            if (s != null && !s.isEmpty()) {
+                try {
+                    batch.renameLabel(labels.getSelectedValue(), s);
+                } catch (IOException|IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(
+                            frame,
+                            ex.getClass().getSimpleName() + ": " + ex.getMessage(),
+                            "Unable to Rename Label",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            }
+        });
+        closeMenu.addActionListener(e -> labelInterface.setVisible(false));
+        return labelInterface;
     }
 
     private void load(Path path) throws IOException {

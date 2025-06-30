@@ -8,8 +8,10 @@ public class LabellingContext implements Categoriser {
     private String currentValue;
 
     private JList<String> external;
+    private volatile boolean modifying = false;
 
     public void updateModel(Properties properties) {
+        modifying = true;
         this.model.removeAllElements();
 
         String selectedValue = this.currentValue;
@@ -23,6 +25,8 @@ public class LabellingContext implements Categoriser {
             if (value.equals(selectedValue))
                 currentValueExists = true;
         }
+
+        modifying = false;
 
         if (!model.isEmpty()) {
             if (currentValueExists) {
@@ -59,8 +63,11 @@ public class LabellingContext implements Categoriser {
 
     public JList<String> createInterface() {
         JList<String> list = new JList<>(this.model);
-        list.addListSelectionListener(e ->
-                currentValue = getCategoryLabel(e.getLastIndex()));
+        list.addListSelectionListener(e -> {
+                if (!modifying) {
+                    currentValue = list.getModel().getSize() ==0 ? null: getCategoryLabel(e.getFirstIndex());
+                }
+        });
         return this.external = list;
     }
 }

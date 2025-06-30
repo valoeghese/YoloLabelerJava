@@ -4,6 +4,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Stream;
 
@@ -77,7 +79,33 @@ public class Batch {
         throw new UnsupportedOperationException("Not implemented.");
     }
 
-    public void renameLabel(String label, String newName) {
-        throw new UnsupportedOperationException("Not implemented.");
+    class InvalidValue extends IllegalArgumentException {
+        InvalidValue(String message) {
+            super(message);
+        }
+    }
+
+    public void renameLabel(String label, String newName) throws IOException {
+        String key = null;
+        Properties copy = new Properties();
+        for (Map.Entry<Object, Object> entry : this.labels.entrySet()) {
+            if (entry.getValue().equals(label)) {
+                key = (String)entry.getKey();
+            }
+            if (entry.getValue().equals(newName)) {
+                throw new InvalidValue("name \"" + newName + "\" is already taken!");
+            }
+            copy.put(entry.getKey(), entry.getValue());
+        }
+        Objects.requireNonNull(key, "label \"" + label + "\" could not be found.");
+
+        copy.put(key, newName);
+        // save
+        try (OutputStream writer = new BufferedOutputStream(Files.newOutputStream(this.labelsFile))) {
+            copy.storeToXML(writer, "YOLO Labeler labels");
+        }
+        // no error
+        this.labels.put(key, newName);
+        this.categoriser.updateModel(this.labels);
     }
 }
