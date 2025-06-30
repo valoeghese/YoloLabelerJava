@@ -102,7 +102,10 @@ public class YoloLabelerRoot extends JPanel {
 
         JSplitPane splitPane = new JSplitPane();
         JScrollPane jScP = new JScrollPane();
-        jScP.getViewport().add(this.display);
+        JPanel bridge = new JPanel();
+        bridge.setLayout(new FlowLayout(FlowLayout.LEFT));
+        bridge.add(this.display);
+        jScP.getViewport().add(bridge);
         jScP.getVerticalScrollBar().setUnitIncrement(12);
         jScP.getHorizontalScrollBar().setUnitIncrement(12);
         splitPane.setLeftComponent(jScP);
