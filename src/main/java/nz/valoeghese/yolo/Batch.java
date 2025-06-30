@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Stream;
 
@@ -25,14 +26,19 @@ public class Batch {
                 labels.loadFromXML(reader);
             }
 
-            this.categoriser.updateModel(labels);
+            this.labelCount = this.categoriser.updateModel(labels);
+            String lsle = labels.getProperty("lastEdited");
+            this.lastSessionLastEdited = lsle == null ? null : this.root.resolve(lsle);
         } else {
             Files.createFile(labelsFile);
+            this.lastSessionLastEdited = null;
         }
     }
 
     private final Path root, labelsFile;
+    private final Path lastSessionLastEdited;
     private Properties labels = new Properties();
+    private int labelCount = 0;
     private LabellingContext categoriser = new LabellingContext();
 
     public Stream<Path> listImages() throws IOException {
@@ -42,6 +48,10 @@ public class Batch {
 
     public Categoriser getCategoriser() {
         return this.categoriser;
+    }
+
+    public Optional<Path> getLastSessionLastEdited() {
+        return Optional.ofNullable(this.lastSessionLastEdited);
     }
 
     private static boolean isImage(Path p) {
@@ -60,19 +70,33 @@ public class Batch {
         return new YoloImage(path, meta, this.categoriser);
     }
 
+    public void setLastEdited(Path path) throws IOException {
+        Path p = this.root.relativize(path);
+        String relativePath = p.toString();
+        if (!relativePath.equals(this.labels.getProperty("lastEdited"))) {
+            this.labels.setProperty("lastEdited", relativePath);
+        }
+
+        this.saveXML();
+    }
+
     public void addLabel(String label) throws IOException {
         if (this.labels.containsValue(label))
             return;
 
         this.labels.put(
-                String.valueOf(this.labels.size()),
+                String.valueOf(this.labelCount++),
                 label
         );
+        this.saveXML();
+
+        this.categoriser.updateModel(this.labels);
+    }
+
+    private void saveXML() throws IOException {
         try (OutputStream writer = new BufferedOutputStream(Files.newOutputStream(this.labelsFile))) {
             this.labels.storeToXML(writer, "YOLO Labeler labels");
         }
-
-        this.categoriser.updateModel(this.labels);
     }
 
     public void removeLabel(String label) {
@@ -105,7 +129,7 @@ public class Batch {
             copy.storeToXML(writer, "YOLO Labeler labels");
         }
         // no error
-        this.labels.put(key, newName);
+        this.labels.setProperty(key, newName);
         this.categoriser.updateModel(this.labels);
     }
 }

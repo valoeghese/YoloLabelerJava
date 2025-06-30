@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
@@ -157,15 +158,49 @@ public class YoloLabelerRoot extends JPanel {
 
         splitPane.setDividerLocation(880);
 
-        List<Path> images = batch.listImages().collect(Collectors.toList());
+        // Load initial image
+        Optional<Path> lastSessionLastEdited = batch.getLastSessionLastEdited();
 
-        if (!images.isEmpty())
-        {
-            currentPath = images.get(0);
-            this.load(images.get(0));
+        boolean unloaded = true;
+        if (lastSessionLastEdited.isPresent()) {
+            Path p = lastSessionLastEdited.get();
 
-            if (images.size() > 1) {
-                this.next.setEnabled(true);
+            if (Files.exists(p)) {
+                System.out.println("Session found. Loading last edited file");
+                this.load(p);
+
+                // update buttons
+                List<Path> images = batch.listImages().collect(Collectors.toList());
+                Path last = null;
+                boolean lastIsP = false;
+                for (Path image : images) {
+                    boolean thisIsP = Files.isSameFile(p, image);
+
+                    if (last != null && thisIsP) { // there exists an image before p
+                        this.previous.setEnabled(true);
+                    }
+                    if (lastIsP) { // there exists an image after p
+                        this.next.setEnabled(true);
+                    }
+
+                    last = image;
+                    lastIsP = thisIsP;
+                }
+
+                unloaded = false;
+            }
+        }
+
+        if (unloaded) {
+            List<Path> images = batch.listImages().collect(Collectors.toList());
+
+            if (!images.isEmpty()) {
+                currentPath = images.get(0);
+                this.load(images.get(0));
+
+                if (images.size() > 1) {
+                    this.next.setEnabled(true);
+                }
             }
         }
     }
@@ -203,6 +238,7 @@ public class YoloLabelerRoot extends JPanel {
     private void load(Path path) throws IOException {
         this.currentPath = path;
         this.currentImageName.setText(path.getFileName().toString());
+        this.batch.setLastEdited(path);
         this.display.loadImage(batch.loadImage(path));
     }
 

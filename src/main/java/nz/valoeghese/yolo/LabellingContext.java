@@ -10,7 +10,7 @@ public class LabellingContext implements Categoriser {
     private JList<String> external;
     private volatile boolean modifying = false;
 
-    public void updateModel(Properties properties) {
+    public int updateModel(Properties properties) {
         modifying = true;
         this.model.removeAllElements();
 
@@ -38,6 +38,9 @@ public class LabellingContext implements Categoriser {
                 this.external.setSelectedValue(selectedValue, false);
             }
         }
+
+        // feedback: count
+        return this.model.getSize();
     }
 
     @Override
