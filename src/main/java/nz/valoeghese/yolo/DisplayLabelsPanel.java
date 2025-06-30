@@ -73,7 +73,12 @@ public class DisplayLabelsPanel extends JPanel {
         if (this.metadata != null) {
             g.setColor(Color.YELLOW);
             for (Box box : this.metadata) {
+                g.fillRect((int)box.x, (int)box.y - 17, g.getFontMetrics().stringWidth(box.object) + 3, 12);
                 g.drawRect((int) box.x, (int) box.y, (int) Math.abs(box.x1 - box.x), (int) Math.abs(box.y1 - box.y));
+            }
+            g.setColor(Color.DARK_GRAY);
+            for (Box box : this.metadata) {
+                g.drawString(box.object, (int)box.x + 1, (int)box.y - 6);
             }
         }
 
