@@ -85,11 +85,11 @@ public class AdjustMode extends Mode {
 
         switch (movingEdge) {
             case TOP:
-                return new Point((int) movingBox.x, (int) clamp(movingBox.y + delta, 0, movingBox.y1));
+                return point(movingBox.x, clamp(movingBox.y + delta, 0, movingBox.y1));
             case LEFT:
-                return new Point((int) clamp(movingBox.x + delta, 0, movingBox.x1), (int) movingBox.y);
+                return point(clamp(movingBox.x + delta, 0, movingBox.x1), movingBox.y);
             default:
-                return new Point((int) movingBox.x, (int) movingBox.y);
+                return point(movingBox.x, movingBox.y);
         }
     }
 
@@ -101,11 +101,11 @@ public class AdjustMode extends Mode {
         final BufferedImage i = this.panel.getYoloImage().getImage();
         switch (movingEdge) {
             case BOTTOM:
-                return new Point((int) movingBox.x1, (int) clamp(movingBox.y1 + delta, movingBox.y, i.getHeight() - 1));
+                return point(movingBox.x1, clamp(movingBox.y1 + delta, movingBox.y, i.getHeight() - 1));
             case RIGHT:
-                return new Point((int) clamp(movingBox.x1 + delta, movingBox.x, i.getWidth() - 1), (int) movingBox.y1);
+                return point(clamp(movingBox.x1 + delta, movingBox.x, i.getWidth() - 1), movingBox.y1);
             default:
-                return new Point((int) movingBox.x1, (int) movingBox.y1);
+                return point(movingBox.x1, movingBox.y1);
         }
     }
 

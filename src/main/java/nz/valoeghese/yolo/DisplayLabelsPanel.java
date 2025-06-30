@@ -73,12 +73,17 @@ public class DisplayLabelsPanel extends JPanel {
         if (this.metadata != null) {
             g.setColor(Color.YELLOW);
             for (Box box : this.metadata) {
-                g.fillRect((int)box.x, (int)box.y - 17, g.getFontMetrics().stringWidth(box.object) + 3, 12);
-                g.drawRect((int) box.x, (int) box.y, (int) Math.abs(box.x1 - box.x), (int) Math.abs(box.y1 - box.y));
+                int x = (int)Math.round(box.x);
+                int y = (int)Math.round(box.y);
+                int x1 = (int)Math.round(box.x1);
+                int y1 = (int)Math.round(box.y1);
+
+                g.fillRect(x, y - 17, g.getFontMetrics().stringWidth(box.object) + 3, 12);
+                g.drawRect(x, y, x1 - x + 1, y1 - y + 1);
             }
             g.setColor(Color.DARK_GRAY);
             for (Box box : this.metadata) {
-                g.drawString(box.object, (int)box.x + 1, (int)box.y - 6);
+                g.drawString(box.object, (int)Math.round(box.x) + 1, (int)Math.round(box.y) - 6);
             }
         }
 
@@ -91,7 +96,7 @@ public class DisplayLabelsPanel extends JPanel {
             int y0 = Math.min(p.y, p1.y);
 
             g.setColor(Color.GREEN);
-            g.drawRect(x0, y0, Math.abs(p.x-p1.x), Math.abs(p.y-p1.y));
+            g.drawRect(x0, y0, Math.abs(p.x-p1.x)+1, Math.abs(p.y-p1.y)+1);
         }
     }
 

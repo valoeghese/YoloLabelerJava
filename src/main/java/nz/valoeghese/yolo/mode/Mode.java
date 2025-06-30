@@ -66,6 +66,10 @@ public abstract class Mode extends MouseAdapter implements DisplayLabelsPanel.Se
         public final Edge edge;
     }
 
+    public static Point point(double x, double y) {
+        return new Point((int)Math.round(x), (int)Math.round(y));
+    }
+
     private static double eqCmp(double value, double otherValue, int tolerance) {
         double a;
         if (value > otherValue) {

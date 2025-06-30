@@ -69,7 +69,7 @@ public class MoveMode extends Mode {
         if (movingBox == null)
             return null;
 
-        return new Point((int) movingBox.x + deltaX, (int) movingBox.y + deltaY);
+        return new Point((int)Math.round(movingBox.x) + deltaX, (int) Math.round(movingBox.y) + deltaY);
     }
 
     @Override
@@ -77,6 +77,6 @@ public class MoveMode extends Mode {
         if (movingBox == null)
             return null;
 
-        return new Point((int) movingBox.x1 + deltaX, (int) movingBox.y1 + deltaY);
+        return new Point((int) Math.round(movingBox.x1) + deltaX, (int) Math.round(movingBox.y1) + deltaY);
     }
 }
