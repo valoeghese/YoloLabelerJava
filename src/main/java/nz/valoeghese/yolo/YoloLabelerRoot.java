@@ -5,6 +5,7 @@ import nz.valoeghese.yolo.mode.CreateMode;
 import nz.valoeghese.yolo.mode.MoveMode;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
@@ -35,6 +36,7 @@ public class YoloLabelerRoot extends JPanel {
 
     private final DisplayLabelsPanel display;
     private final Batch batch;
+    private final JLabel currentImageName;
     private JButton previous, next;
     private Path currentPath;
 
@@ -108,6 +110,11 @@ public class YoloLabelerRoot extends JPanel {
         JPanel panel = new JPanel();
         JButton button = new JButton("+");
         panel.setLayout(new BorderLayout());
+        this.currentImageName = new JLabel();
+        this.currentImageName.setMinimumSize(new Dimension(0, 30));
+        this.currentImageName.setPreferredSize(new Dimension(0, 30));
+        this.currentImageName.setBorder(new BevelBorder(BevelBorder.RAISED));
+        panel.add(currentImageName, BorderLayout.NORTH);
         JList<String> labels = batch.getCategoriser().createInterface();
 
         JPopupMenu labelInterface = createLabelMenu(frame, batch, labels);
@@ -192,6 +199,7 @@ public class YoloLabelerRoot extends JPanel {
 
     private void load(Path path) throws IOException {
         this.currentPath = path;
+        this.currentImageName.setText(path.getFileName().toString());
         this.display.loadImage(batch.loadImage(path));
     }
 
