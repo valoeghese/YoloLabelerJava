@@ -79,7 +79,7 @@ public class DisplayLabelsPanel extends JPanel {
                 int y1 = (int)Math.round(box.y1);
 
                 g.fillRect(x, y - 17, g.getFontMetrics().stringWidth(box.object) + 3, 12);
-                g.drawRect(x, y, x1 - x + 1, y1 - y + 1);
+                g.drawRect(x, y, x1 - x, y1 - y);
             }
             g.setColor(Color.DARK_GRAY);
             for (Box box : this.metadata) {
@@ -96,7 +96,7 @@ public class DisplayLabelsPanel extends JPanel {
             int y0 = Math.min(p.y, p1.y);
 
             g.setColor(Color.GREEN);
-            g.drawRect(x0, y0, Math.abs(p.x-p1.x)+1, Math.abs(p.y-p1.y)+1);
+            g.drawRect(x0, y0, Math.abs(p.x-p1.x), Math.abs(p.y-p1.y));
         }
     }
 
