@@ -10,6 +10,11 @@ public class LabellingContext implements Categoriser {
     private JList<String> external;
     private volatile boolean modifying = false;
 
+    public int updateModel(Properties properties, String selectedValue) {
+        this.currentValue = selectedValue;
+        return this.updateModel(properties);
+    }
+
     public int updateModel(Properties properties) {
         modifying = true;
         this.model.removeAllElements();
@@ -29,7 +34,7 @@ public class LabellingContext implements Categoriser {
         modifying = false;
 
         if (!model.isEmpty()) {
-            if (currentValueExists) {
+            if (!currentValueExists) {
                 // instantiate first value
                 selectedValue = this.model.getElementAt(0);
             }

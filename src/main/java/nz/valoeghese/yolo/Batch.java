@@ -135,6 +135,6 @@ public class Batch {
         }
         // no error
         this.labels.setProperty(key, newName);
-        this.categoriser.updateModel(this.labels);
+        this.categoriser.updateModel(this.labels, newName);
     }
 }
