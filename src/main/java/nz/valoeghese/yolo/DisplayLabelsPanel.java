@@ -73,8 +73,8 @@ public class DisplayLabelsPanel extends JPanel {
         if (this.metadata != null) {
             g.setColor(Color.YELLOW);
             for (Box box : this.metadata) {
-                int x = (int)Math.round(box.x);
-                int y = (int)Math.round(box.y);
+                int x = (int)Math.round(box.x0);
+                int y = (int)Math.round(box.y0);
                 int x1 = (int)Math.round(box.x1);
                 int y1 = (int)Math.round(box.y1);
 
@@ -83,7 +83,7 @@ public class DisplayLabelsPanel extends JPanel {
             }
             g.setColor(Color.DARK_GRAY);
             for (Box box : this.metadata) {
-                g.drawString(box.object, (int)Math.round(box.x) + 1, (int)Math.round(box.y) - 6);
+                g.drawString(box.object, (int)Math.round(box.x0) + 1, (int)Math.round(box.y0) - 6);
             }
         }
 

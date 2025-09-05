@@ -27,26 +27,26 @@ public abstract class Mode extends MouseAdapter implements DisplayLabelsPanel.Se
 
         for (Box box : this.panel.getYoloImage()) {
             double distX = Math.min(
-                    eqCmp(box.x, pt.getX(), tolerance),
+                    eqCmp(box.x0, pt.getX(), tolerance),
                     eqCmp(box.x1, pt.getX(), tolerance)
             );
 
-            if (distX <= tolerance && box.y - tolerance < pt.getY() && box.y1 + tolerance > pt.getY()) {
+            if (distX <= tolerance && box.y0 - tolerance < pt.getY() && box.y1 + tolerance > pt.getY()) {
                 if (distX < closest) {
-                    edge = closest(pt.getX(), box.x, box.x1, Edge.LEFT, Edge.RIGHT);
+                    edge = closest(pt.getX(), box.x0, box.x1, Edge.LEFT, Edge.RIGHT);
                     closest = distX;
                     selected = box;
                 }
             }
 
             double distY = Math.min(
-                    eqCmp(box.y, pt.getY(), tolerance),
+                    eqCmp(box.y0, pt.getY(), tolerance),
                     eqCmp(box.y1, pt.getY(), tolerance)
             );
 
-            if (distY <= tolerance && box.x - tolerance < pt.getX() && box.x1 + tolerance > pt.getX()) {
+            if (distY <= tolerance && box.x0 - tolerance < pt.getX() && box.x1 + tolerance > pt.getX()) {
                 if (distY < closest) {
-                    edge = closest(pt.getY(), box.y, box.y1, Edge.TOP, Edge.BOTTOM);
+                    edge = closest(pt.getY(), box.y0, box.y1, Edge.TOP, Edge.BOTTOM);
                     closest = distY;
                     selected = box;
                 }

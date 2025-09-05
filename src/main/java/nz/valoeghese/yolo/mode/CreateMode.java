@@ -56,7 +56,7 @@ public class CreateMode extends Mode {
 
         if (width > 2 && height > 2 && this.batch.getCategoriser().getCurrentCategory() != null) {
             try {
-                this.panel.getYoloImage().addBox(new Box(
+                this.panel.getYoloImage().addBox(Box.spanning(
                         this.batch.getCategoriser().getCurrentCategory(),
                         Math.min(startPoint.x, endPoint.x),
                         Math.min(startPoint.y, endPoint.y),

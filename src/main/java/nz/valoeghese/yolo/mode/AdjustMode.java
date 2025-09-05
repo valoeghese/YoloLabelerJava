@@ -28,8 +28,8 @@ public class AdjustMode extends Mode {
             if (end.x - start.x < 1 || end.y - start.y < 1) {
                 this.panel.getYoloImage().removeBox(movingBox);
             } else {
-                movingBox.x = start.x;
-                movingBox.y = start.y;
+                movingBox.x0 = start.x;
+                movingBox.y0 = start.y;
                 movingBox.x1 = end.x;
                 movingBox.y1 = end.y;
             }
@@ -85,11 +85,11 @@ public class AdjustMode extends Mode {
 
         switch (movingEdge) {
             case TOP:
-                return point(movingBox.x, clamp(movingBox.y + delta, 0, movingBox.y1));
+                return point(movingBox.x0, clamp(movingBox.y0 + delta, 0, movingBox.y1));
             case LEFT:
-                return point(clamp(movingBox.x + delta, 0, movingBox.x1), movingBox.y);
+                return point(clamp(movingBox.x0 + delta, 0, movingBox.x1), movingBox.y0);
             default:
-                return point(movingBox.x, movingBox.y);
+                return point(movingBox.x0, movingBox.y0);
         }
     }
 
@@ -101,9 +101,9 @@ public class AdjustMode extends Mode {
         final BufferedImage i = this.panel.getYoloImage().getImage();
         switch (movingEdge) {
             case BOTTOM:
-                return point(movingBox.x1, clamp(movingBox.y1 + delta, movingBox.y, i.getHeight() - 1));
+                return point(movingBox.x1, clamp(movingBox.y1 + delta, movingBox.y0, i.getHeight() - 1));
             case RIGHT:
-                return point(clamp(movingBox.x1 + delta, movingBox.x, i.getWidth() - 1), movingBox.y1);
+                return point(clamp(movingBox.x1 + delta, movingBox.x0, i.getWidth() - 1), movingBox.y1);
             default:
                 return point(movingBox.x1, movingBox.y1);
         }

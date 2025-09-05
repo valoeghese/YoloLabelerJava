@@ -31,7 +31,7 @@ public class YoloImage implements Iterable<Box> {
                 while ((line = reader.readLine()) != null) {
                     Scanner scanner = new Scanner(line);
                     this.boxes.add(
-                            new Box(categoriser.getCategoryLabel(scanner.nextInt()),
+                            Box.yolo(categoriser.getCategoryLabel(scanner.nextInt()),
                                     scanner.nextFloat() * width,
                                     scanner.nextFloat() * height,
                                     scanner.nextFloat() * width,
@@ -55,7 +55,7 @@ public class YoloImage implements Iterable<Box> {
                 while ((line = reader.readLine()) != null) {
                     Scanner scanner = new Scanner(line);
                     this.boxes.add(
-                            new Box(categoriser.getCategoryLabel(scanner.nextInt()),
+                            Box.yolo(categoriser.getCategoryLabel(scanner.nextInt()),
                                     scanner.nextFloat(),
                                     scanner.nextFloat(),
                                     scanner.nextFloat(),
@@ -97,7 +97,7 @@ public class YoloImage implements Iterable<Box> {
         }
 
         try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(this.p_boxes, StandardOpenOption.APPEND))) {
-            writer.printf("%d %f %f %f %f\n", this.categoriser.getCategoryIdx(box.object), box.x/width, box.y/height, box.x1/width, box.y1/height);
+            writer.printf("%d %f %f %f %f\n", this.categoriser.getCategoryIdx(box.object), box.x0 /width, box.y0 /height, box.x1/width, box.y1/height);
             writer.flush();
         }
     }
@@ -113,7 +113,7 @@ public class YoloImage implements Iterable<Box> {
 
         try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(this.p_boxes))) {
             for (Box box : this) {
-                writer.printf("%d %f %f %f %f\n", this.categoriser.getCategoryIdx(box.object), box.x, box.y, box.x1, box.y1);
+                writer.printf("%d %f %f %f %f\n", this.categoriser.getCategoryIdx(box.object), box.x0, box.y0, box.x1, box.y1);
                 writer.flush();
             }
         }
@@ -126,7 +126,7 @@ public class YoloImage implements Iterable<Box> {
 
         try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(this.p_boxes))) {
             for (Box box : this) {
-                writer.printf("%d %f %f %f %f\n", this.categoriser.getCategoryIdx(box.object), box.x/width, box.y/height, box.x1/width, box.y1/height);
+                writer.printf("%d %f %f %f %f\n", this.categoriser.getCategoryIdx(box.object), box.x0 /width, box.y0 /height, box.x1/width, box.y1/height);
                 writer.flush();
             }
         }

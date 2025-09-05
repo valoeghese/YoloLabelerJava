@@ -3,7 +3,6 @@ package nz.valoeghese.yolo.mode;
 import nz.valoeghese.yolo.Batch;
 import nz.valoeghese.yolo.Box;
 import nz.valoeghese.yolo.DisplayLabelsPanel;
-import nz.valoeghese.yolo.Edge;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -28,8 +27,8 @@ public class MoveMode extends Mode {
             if (end.x <= 0 || end.y <= 0) {
                 this.panel.getYoloImage().removeBox(movingBox);
             } else {
-                movingBox.x = start.x;
-                movingBox.y = start.y;
+                movingBox.x0 = start.x;
+                movingBox.y0 = start.y;
                 movingBox.x1 = end.x;
                 movingBox.y1 = end.y;
             }
@@ -69,7 +68,7 @@ public class MoveMode extends Mode {
         if (movingBox == null)
             return null;
 
-        return new Point((int)Math.round(movingBox.x) + deltaX, (int) Math.round(movingBox.y) + deltaY);
+        return new Point((int)Math.round(movingBox.x0) + deltaX, (int) Math.round(movingBox.y0) + deltaY);
     }
 
     @Override
