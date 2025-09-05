@@ -97,7 +97,7 @@ public class YoloImage implements Iterable<Box> {
         }
 
         try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(this.p_boxes, StandardOpenOption.APPEND))) {
-            writer.printf("%d %f %f %f %f\n", this.categoriser.getCategoryIdx(box.object), box.x0 /width, box.y0 /height, box.x1/width, box.y1/height);
+            box.write(writer, this.categoriser, width, height);
             writer.flush();
         }
     }
@@ -107,18 +107,6 @@ public class YoloImage implements Iterable<Box> {
         this.boxes.remove(box);
     }
 
-    public void reSave() throws IOException {
-        if (this.image != null)
-            throw new IllegalStateException("Image is loaded.");
-
-        try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(this.p_boxes))) {
-            for (Box box : this) {
-                writer.printf("%d %f %f %f %f\n", this.categoriser.getCategoryIdx(box.object), box.x0, box.y0, box.x1, box.y1);
-                writer.flush();
-            }
-        }
-    }
-
     public void fullSave() throws IOException {
         Objects.requireNonNull(image, "Image is not loaded.");
         final int width = this.image.getWidth();
@@ -126,7 +114,7 @@ public class YoloImage implements Iterable<Box> {
 
         try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(this.p_boxes))) {
             for (Box box : this) {
-                writer.printf("%d %f %f %f %f\n", this.categoriser.getCategoryIdx(box.object), box.x0 /width, box.y0 /height, box.x1/width, box.y1/height);
+                box.write(writer, this.categoriser, width, height);
                 writer.flush();
             }
         }

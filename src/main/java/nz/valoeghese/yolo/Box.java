@@ -1,5 +1,8 @@
 package nz.valoeghese.yolo;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+
 public class Box {
     // not a record older java versions can also compile it
     private Box(String object, double x0, double y0, double x1, double y1) {
@@ -26,6 +29,10 @@ public class Box {
     }
     public double height() {
         return y1 - y0;
+    }
+
+    public void write(PrintWriter writer, Categoriser categoriser, final int width, final int height) throws IOException {
+        writer.printf("%d %f %f %f %f\n", categoriser.getCategoryIdx(this.object), this.xCentre()/width, this.yCentre()/height, this.width()/width, this.height()/height);
     }
 
     /**
